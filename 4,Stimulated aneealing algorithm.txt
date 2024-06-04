@@ -1,0 +1,39 @@
+#Stimulated aneealing algorithm
+
+import random
+import math
+def distance(points):
+    return sum(math.hypot(points[i][0] - points[i-1][0], points[i][1] - points[i-1][1]) for i in range(len(points)))
+def generate_neighbor(points):
+    i, j = random.sample(range(len(points)), 2)
+    points[i], points[j] = points[j], points[i]
+    return points
+def simulated_annealing(points, max_iterations, initial_temperature, cooling_rate):
+    current_points = points
+    current_distance = distance(current_points)
+    best_points = current_points
+    best_distance = current_distance
+    print("Initial distance:", current_distance)
+    for _ in range(max_iterations):
+        new_points = generate_neighbor(current_points)
+        new_distance = distance(new_points)
+        if new_distance < current_distance:
+            current_points = new_points
+            current_distance = new_distance
+            best_points = new_points
+            best_distance = new_distance
+        else:
+            delta = new_distance - current_distance
+            probability = math.exp(-delta / initial_temperature)
+            if random.random() < probability:
+                current_points = new_points
+                current_distance = new_distance
+        initial_temperature *= cooling_rate
+    print("Finished")
+    print("Final distance:", best_distance)
+    print("Solution:", "|".join(f"{point[0]},{point[1]}" for point in best_points))
+points = [(60,120),(120,140)]
+max_iterations = 1000
+initial_temperature = 100
+cooling_rate = 0.9
+simulated_annealing(points, max_iterations, initial_temperature, cooling_rate)

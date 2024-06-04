@@ -1,0 +1,34 @@
+#Travelling Salesman Problem
+
+class TSP:
+    def __init__(self):
+        self.n = int(input("Enter no. of nodes: "))
+        self.weight = [[0] * self.n for _ in range(self.n)]
+        self.INF = float('inf')
+        for i in range(self.n):
+            for j in range(self.n):
+                if i != j:
+                    self.weight[i][j] = int(input(f"Enter weight of {i + 1} to {j + 1}: "))
+        self.tour, self.finalCost = self.tsp(0, list(range(1, self.n)), self.n - 1)
+        print("\nThe tour is 0-", end="")
+        print("-".join(map(lambda x: str(x + 1), self.tour)), "-0")
+        print("The final cost is", self.finalCost)
+
+    def tsp(self, current_node, remaining_nodes, remaining_cities):
+        if remaining_cities == 0:
+            return [current_node], self.weight[current_node][0]
+
+        min_cost = self.INF
+        best_tour = None
+        for next_node in remaining_nodes:
+            new_remaining_nodes = [node for node in remaining_nodes if node != next_node]
+            subtour, subtour_cost = self.tsp(next_node, new_remaining_nodes, remaining_cities - 1)
+            total_cost = self.weight[current_node][next_node] + subtour_cost
+            if total_cost < min_cost:
+                min_cost = total_cost
+                best_tour = [current_node] + subtour
+
+        return best_tour, min_cost
+
+if __name__ == "__main__":
+    obj = TSP()

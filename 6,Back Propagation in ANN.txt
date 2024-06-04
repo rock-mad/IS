@@ -1,0 +1,46 @@
+#Back Propagation in ANN
+
+class Neuron:
+    def __init__(self, activationValue, weight, neuronName, nInputs):
+        self.activationValue = activationValue
+        self.weight = weight
+        self.neuronName = neuronName
+        self.outputs = []
+        self.inputs = [0] * nInputs
+        self.inputCounter = 0
+        self.nInputs = nInputs
+
+    def connect(self, neuron):
+        self.outputs.append(neuron)
+
+    def input(self, inputValue):
+        self.inputs[self.inputCounter] = inputValue
+        self.inputCounter += 1
+        if self.inputCounter == self.nInputs:
+            self.fire()
+
+    def fire(self):
+        total_input = sum(self.inputs)
+        signal = total_input * self.weight
+        if signal > self.activationValue:
+            for output_neuron in self.outputs:
+                output_neuron.input(signal)
+        else:
+            for output_neuron in self.outputs:
+                output_neuron.input(0)
+        print(self.neuronName + ":" + str(signal))
+
+inputNode = Neuron(0, 1, "InputNode", 1)
+hiddenNode_One = Neuron(0.5, 0.9, "HiddenNode_One", 1)
+hiddenNode_Two = Neuron(0.5, 0.9, "HiddenNode_Two", 1)
+hiddenNode_Three = Neuron(0.5, 0.9, "HiddenNode_Three", 1)
+outputNode = Neuron(0, 0.9, "OutputNode", 3)
+
+inputNode.connect(hiddenNode_One)
+inputNode.connect(hiddenNode_Two)
+inputNode.connect(hiddenNode_Three)
+hiddenNode_One.connect(outputNode)
+hiddenNode_Two.connect(outputNode)
+hiddenNode_Three.connect(outputNode)
+
+inputNode.input(1)

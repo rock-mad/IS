@@ -1,0 +1,26 @@
+# Simple Expert System suing Decision System
+from sklearn.datasets import load_iris
+from sklearn.model_selection import cross_val_predict, cross_val_score, KFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
+import numpy as np
+iris = load_iris()
+X, y = iris.data, iris.target
+
+kf = KFold(n_splits=5, shuffle=True, random_state=1)
+confusion_matrices = []
+accuracies = []
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X[train_index], X[test_index]
+    y_train, y_test = y[train_index], y[test_index]
+    clf = DecisionTreeClassifier()
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    confusion_matrices.append(confusion_matrix(y_test, y_pred))
+    accuracies.append(accuracy_score(y_test, y_pred))
+average_confusion_matrix = sum(confusion_matrices) / len(confusion_matrices)
+average_accuracy = np.mean(accuracies) * 100
+
+print("Average Confusion Matrix:")
+print(average_confusion_matrix)
+print("Average Accuracy:", average_accuracy)

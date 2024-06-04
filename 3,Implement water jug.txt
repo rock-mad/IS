@@ -1,0 +1,39 @@
+#Implement water jug 
+
+def water_jug(jug1_capacity, jug2_capacity, target):
+ 
+  actions = {
+      "fill_jug1": (jug1_capacity, 0),  
+      "fill_jug2": (0, jug2_capacity), 
+      "empty_jug1": (0, jug1_capacity),   
+      "empty_jug2": (jug1_capacity, 0),  
+      "pour1_to_2": (max(0, jug1_capacity - jug2_capacity), min(jug1_capacity, jug2_capacity)),  
+      "pour2_to_1": (min(jug2_capacity, jug1_capacity), max(0, jug2_capacity - jug1_capacity)) 
+  }
+
+  frontier = [((0, 0), [])]  
+  visited = set()
+
+  while frontier:
+    current_state, path = frontier.pop(0) 
+    if current_state[0] == target or current_state[1] == target:
+      return path + [current_state]  
+    for action, result in actions.items():
+      new_state = (min(current_state[0] + result[0], jug1_capacity), min(current_state[1] + result[1], jug2_capacity))
+      if new_state not in visited:
+        visited.add(new_state)
+        frontier.append((new_state, path + [action]))  
+
+  return None 
+jug1_capacity = int(input("Enter capacity of jug 1 (in liters): "))
+jug2_capacity = int(input("Enter capacity of jug 2 (in liters): "))
+target = int(input("Enter target amount of water (in liters): "))
+
+result = water_jug(jug1_capacity, jug2_capacity, target)
+
+if result:
+  print("Steps to reach the target:")
+  for action in result:
+    print(action)
+else:
+  print("No solution found for the given capacities and target.")
